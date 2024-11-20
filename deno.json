@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "next-themes": "npm:next-themes@latest"
+  }
+} 

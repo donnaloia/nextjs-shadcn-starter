@@ -32,7 +32,7 @@ export default function LoginPage() {
     
     try {
       console.log('Attempting login with payload:', payload)
-      const response = await fetch('http://localhost:8000/login/', {  // Note the trailing slash
+      const response = await fetch('auth:3001/account/login/', {  // Note the trailing slash
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
@@ -45,7 +45,8 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json()
         console.log('Login successful:', data)
-        document.cookie = `token=${data.token}; path=/`
+        localStorage.setItem('access-token', data.token)
+        document.cookie = `access-token=${data.token}; path=/`
         router.push('/') // Redirect to home page
         router.refresh() // Refresh the page to update the layout
       } else {
@@ -62,7 +63,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-background p-4">
+    <div className="fixed inset-0 grid place-items-center pt-[8vh]">
       <Card className="w-full max-w-[400px] shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Welcome back</CardTitle>

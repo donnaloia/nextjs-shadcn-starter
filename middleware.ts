@@ -2,37 +2,23 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Get the token from the cookies
-  const token = request.cookies.get('token')?.value
+  // Get access token from localStorage (cookies in middleware)
+  const accessToken = request.cookies.get('access-token')
+  
+  // Check if we're already on the login page
+  const isLoginPage = request.nextUrl.pathname === '/login'
 
-  // Get the current path
-  const { pathname } = request.nextUrl
-
-  // If we're already on the login page, don't redirect
-  if (pathname === '/login') {
-    return NextResponse.next()
+  // If no token and not already on login page, redirect to login
+  if (!accessToken && !isLoginPage) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // If there's no token, redirect to login
-  if (!token) {
-    const loginUrl = new URL('/login', request.url)
-    return NextResponse.redirect(loginUrl)
-  }
-
+  // Allow the request to continue
   return NextResponse.next()
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - login (login page)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico|login).*)',
   ],
 } 

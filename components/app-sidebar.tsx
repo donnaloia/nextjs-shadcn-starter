@@ -80,21 +80,21 @@ const data = {
   navMain: [
     {
       title: "Campaign",
-      url: "#",
+      url: "/campaigns",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "New",
-          url: "leaderboard",
+          url: "/campaigns/create",
         },   
         {
           title: "Latest",
-          url: "leaderboard",
+          url: "/campaigns",
         },
         {
           title: "Scheduled",
-          url: "#",
+          url: "/campaigns",
         },
         {
           title: "Past",
@@ -103,17 +103,47 @@ const data = {
       ],
     },
     {
-      title: "Email Lists",
-      url: "#",
+      title: "Email Groups",
+      url: "/email-groups",
       icon: Bot,
       items: [
         {
           title: "Create",
-          url: "#",
+          url: "/email-groups/create",
         },
         {
           title: "View",
-          url: "email_lists",
+          url: "/email-groups",
+        },
+      ],
+    },
+    {
+      title: "Email Addresses",
+      url: "/email-addresses",
+      icon: Bot,
+      items: [
+        {
+          title: "Create",
+          url: "/email-addresses/create",
+        },
+        {
+          title: "View",
+          url: "/email-addresses",
+        },
+      ],
+    },
+    {
+      title: "Templates",
+      url: "/templates",
+      icon: Bot,
+      items: [
+        {
+          title: "Create",
+          url: "/templates/create",
+        },
+        {
+          title: "View",
+          url: "/templates",
         },
       ],
     },
@@ -211,7 +241,7 @@ export default function Page() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-[#412C72]">Platform</SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
@@ -255,7 +285,7 @@ export default function Page() {
             </SidebarMenu>
           </SidebarGroup>
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Projects</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-[#412C72]">Projects</SidebarGroupLabel>
             <SidebarMenu>
               {data.projects.map((item) => (
                 <SidebarMenuItem key={item.name}>

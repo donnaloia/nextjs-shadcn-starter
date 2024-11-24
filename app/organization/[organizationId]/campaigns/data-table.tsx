@@ -93,35 +93,45 @@ export function DataTable<TData, TValue>({
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious 
-              href="#" 
-              onClick={(e) => {
-                e.preventDefault()
-                if (currentPage > 1) onPageChange(currentPage - 1)
+            <PaginationPrevious
+              onClick={() => {
+                const prevPage = currentPage - 1;
+                console.log('Previous clicked, going to page:', prevPage);
+                if (currentPage > 1) {
+                  onPageChange(prevPage);
+                }
               }}
+              className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
-          {[...Array(Math.min(5, pageCount))].map((_, i) => (
+          
+          {[...Array(pageCount)].map((_, i) => (
             <PaginationItem key={i + 1}>
               <PaginationLink
                 href="#"
                 isActive={currentPage === i + 1}
                 onClick={(e) => {
-                  e.preventDefault()
-                  onPageChange(i + 1)
+                  e.preventDefault();
+                  const pageNumber = i + 1;
+                  console.log('Page number clicked:', pageNumber);
+                  onPageChange(pageNumber);
                 }}
               >
                 {i + 1}
               </PaginationLink>
             </PaginationItem>
           ))}
+          
           <PaginationItem>
-            <PaginationNext 
-              href="#" 
-              onClick={(e) => {
-                e.preventDefault()
-                if (currentPage < pageCount) onPageChange(currentPage + 1)
+            <PaginationNext
+              onClick={() => {
+                const nextPage = currentPage + 1;
+                console.log('Next clicked, going to page:', nextPage);
+                if (currentPage < pageCount) {
+                  onPageChange(nextPage);
+                }
               }}
+              className={currentPage >= pageCount ? "pointer-events-none opacity-50" : ""}
             />
           </PaginationItem>
         </PaginationContent>

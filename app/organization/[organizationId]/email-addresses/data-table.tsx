@@ -1,5 +1,7 @@
 "use client"
 
+import { useRouter } from "next/navigation"
+
 import {
   ColumnDef,
   flexRender,
@@ -30,7 +32,6 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   pageCount: number
   currentPage: number
-  onPageChange: (page: number) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -38,8 +39,9 @@ export function DataTable<TData, TValue>({
   data,
   pageCount,
   currentPage,
-  onPageChange,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter()
+
   const table = useReactTable({
     data,
     columns,
@@ -98,7 +100,7 @@ export function DataTable<TData, TValue>({
                 const prevPage = currentPage - 1;
                 console.log('Previous clicked, going to page:', prevPage);
                 if (currentPage > 1) {
-                  onPageChange(prevPage);
+                  router.push(`?page=${prevPage}`)
                 }
               }}
               className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
@@ -114,7 +116,7 @@ export function DataTable<TData, TValue>({
                   e.preventDefault();
                   const pageNumber = i + 1;
                   console.log('Page number clicked:', pageNumber);
-                  onPageChange(pageNumber);
+                  router.push(`?page=${pageNumber}`)
                 }}
               >
                 {i + 1}
@@ -128,7 +130,7 @@ export function DataTable<TData, TValue>({
                 const nextPage = currentPage + 1;
                 console.log('Next clicked, going to page:', nextPage);
                 if (currentPage < pageCount) {
-                  onPageChange(nextPage);
+                  router.push(`?page=${nextPage}`)
                 }
               }}
               className={currentPage >= pageCount ? "pointer-events-none opacity-50" : ""}

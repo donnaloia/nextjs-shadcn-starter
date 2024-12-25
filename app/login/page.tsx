@@ -13,6 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
+import { loginUser } from "@/lib/auth"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -25,41 +26,19 @@ export default function LoginPage() {
     setError("")
 
     const formData = new FormData(event.currentTarget)
-    const payload = {
-      username: formData.get('username'),
-      password: formData.get('password'),
+    const result = await loginUser(
+      formData.get('username') as string,
+      formData.get('password') as string
+    )
+    
+    if (result.success && result.redirectUrl) {
+      router.push(result.redirectUrl)
+      router.refresh()
+    } else {
+      setError(result.error ?? 'Login failed')
     }
     
-    try {
-      console.log('Attempting login with payload:', payload)
-      const response = await fetch('auth:3001/account/login/', {  // Note the trailing slash
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      console.log('Response status:', response.status)
-      
-      if (response.ok) {
-        const data = await response.json()
-        console.log('Login successful:', data)
-        localStorage.setItem('access-token', data.token)
-        document.cookie = `access-token=${data.token}; path=/`
-        router.push('/') // Redirect to home page
-        router.refresh() // Refresh the page to update the layout
-      } else {
-        const errorData = await response.text()
-        console.error('Login failed:', response.status, errorData)
-        setError(`Login failed: ${response.status} ${errorData}`)
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-      setError(`An error occurred: ${error.message}`)
-    } finally {
-      setIsLoading(false)
-    }
+    setIsLoading(false)
   }
 
   return (

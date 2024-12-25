@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, use } from "react"
 import { DataTable } from "./data-table"
 import { columns } from "./columns"
 import { TableSkeleton } from "@/components/table-skeleton"
-import { getAccessToken, removeAccessToken } from "@/lib/auth"
+import { getAccessToken, removeAccessToken } from "@/lib/client-auth"
 import { useRouter } from 'next/navigation'
 
 type Campaign = {
@@ -23,9 +23,9 @@ type ApiResponse = {
 export default function CampaignsPage({
   params,
 }: {
-  params: { organizationId: string }
+  params: Promise<{ organizationId: string }>
 }) {
-  const { organizationId } = params
+  const { organizationId } = use(params)
   const [data, setData] = useState<Campaign[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
@@ -54,10 +54,9 @@ export default function CampaignsPage({
         }
 
         const result: ApiResponse = await response.json()
-        console.log('API Response:', result)
         setData(result.results)
         setPageCount(result.total_pages)
-      } catch (err) {
+      } catch (err: any) {
         if (err.response?.status === 401) {
           removeAccessToken()
           router.push('/login')

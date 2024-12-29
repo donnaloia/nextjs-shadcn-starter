@@ -13,46 +13,47 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { format } from "date-fns"
 
-type EmailAddress = {
+type Template = {
   id: string
-  address: string
+  name: string
   created_at: string
+  status?: string
 }
 
-export const columns: ColumnDef<EmailAddress>[] = [
-  {
-    accessorKey: "address",
-    header: () => (
-      <div className="pl-4 py-4 text-[#614785] text-lg">
-        Name
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="pl-4 py-2">
-        {row.getValue("address")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "created_at",
-    header: ({ column }) => (
-      <div className="flex items-center space-x-3 text-[#614785] text-lg">
-        Created On
-        <ChevronsUpDown 
-          className="h-6 w-4 text-[#614785]/50 hover:text-[#614785] ml-1" 
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        />
-      </div>
-    ),
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("created_at"))
-      return (
-        <div className="py-2">
-          {format(date, "MMM d, yyyy")}
+export const columns: ColumnDef<Template>[] = [
+    {
+        accessorKey: "name",
+        header: () => (
+        <div className="pl-4 py-4 text-[#614785] text-lg">
+            Name
         </div>
-      )
-    }
-  },
+        ),
+        cell: ({ row }) => (
+        <div className="pl-4 py-2">
+            {row.getValue("name")}
+        </div>
+        ),
+    },
+    {
+        accessorKey: "created_at",
+        header: ({ column }) => (
+        <div className="flex items-center space-x-3 text-[#614785] text-lg">
+            Created On
+            <ChevronsUpDown 
+            className="h-6 w-4 text-[#614785]/50 hover:text-[#614785] ml-1" 
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            />
+        </div>
+        ),
+        cell: ({ row }) => {
+        const date = new Date(row.getValue("created_at"))
+        return (
+            <div className="py-2 ext-[#614785]">
+            {format(date, "MMM d, yyyy")}
+            </div>
+        )
+        }
+    },
   {
     id: "actions",
     header: () => (
@@ -61,7 +62,7 @@ export const columns: ColumnDef<EmailAddress>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const emailAddress = row.original
+      const template = row.original
 
       return (
         <DropdownMenu>
@@ -74,12 +75,12 @@ export const columns: ColumnDef<EmailAddress>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(emailAddress.id)}
+              onClick={() => navigator.clipboard.writeText(template.id)}
             >
-              Copy email address ID
+              Copy template ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View email address</DropdownMenuItem>
+            <DropdownMenuItem>View template</DropdownMenuItem>
             <DropdownMenuItem>View analytics</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

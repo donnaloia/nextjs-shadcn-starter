@@ -7,6 +7,7 @@ interface LoginResponse {
   access_token: string
 }
 
+
 function extractUuidFromToken(token: string): string {
   try {
     const [header, payload, signature] = token.split('.')
@@ -25,6 +26,7 @@ function extractUuidFromToken(token: string): string {
     throw new Error('Invalid token format')
   }
 }
+
 
 export async function loginUser(username: string, password: string) {
   try {
@@ -67,6 +69,8 @@ export async function loginUser(username: string, password: string) {
     }
 
     const firstOrg = permissions.organizations[0]
+    await getOrCreateProfile(firstOrg.name, userUuid, username, data.access_token)
+
     const redirectUrl = `/organization/${firstOrg.name}/campaigns`
 
     return {
@@ -79,4 +83,57 @@ export async function loginUser(username: string, password: string) {
       error: error instanceof Error ? error.message : 'An unknown error occurred',
     }
   }
+}
+
+
+async function getOrCreateProfile(organizationId: string, userUuid: string, username: string, token: string) {
+  const cookieStore = await cookies()
+  
+  try {
+    const profileResponse = await fetch(
+      `http://localhost:8080/api/v1/organizations/${organizationId}/profiles/${userUuid}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    )
+
+    if (profileResponse.ok) {
+      const profileData = await profileResponse.json()
+      cookieStore.set('profile-username', profileData.username)
+      cookieStore.set('profile-email', profileData.email)
+      cookieStore.set('profile-picture', profileData.picture_url)
+    } else {
+      const createProfileResponse = await fetch(
+        `http://localhost:8080/api/v1/organizations/${organizationId}/profiles`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: userUuid,
+            username: username,
+            email: `${username}@example.com`,
+            organization_id: organizationId,
+            picture_url: 'https://placeholder.com/user.png'
+          }),
+        }
+      )
+
+      if (!createProfileResponse.ok) {
+        console.error('Failed to create profile')
+      }
+    }
+  } catch (error) {
+    console.error('Profile operation failed:', error)
+  }
+}
+
+
+export async function removeAccessToken() {
+  const cookieStore = await cookies()
+  cookieStore.delete('access-token')
 }

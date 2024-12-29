@@ -71,157 +71,177 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-const data = {
-  user: {
-    name: "donnaloia",
-    email:"ben@example.com",
-    avatar: "/avatars/shadcn.png",
-  },
-  navMain: [
-    {
-      title: "Campaign",
-      url: "/campaigns",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "New",
-          url: "/campaigns/create",
-        },   
-        {
-          title: "Latest",
-          url: "/campaigns",
-        },
-        {
-          title: "Scheduled",
-          url: "/campaigns",
-        },
-        {
-          title: "Past",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Email Groups",
-      url: "/email-groups",
-      icon: Bot,
-      items: [
-        {
-          title: "Create",
-          url: "/email-groups/create",
-        },
-        {
-          title: "View",
-          url: "/email-groups",
-        },
-      ],
-    },
-    {
-      title: "Email Addresses",
-      url: "/email-addresses",
-      icon: Bot,
-      items: [
-        {
-          title: "Create",
-          url: "/email-addresses/create",
-        },
-        {
-          title: "View",
-          url: "/email-addresses",
-        },
-      ],
-    },
-    {
-      title: "Templates",
-      url: "/templates",
-      icon: Bot,
-      items: [
-        {
-          title: "Create",
-          url: "/templates/create",
-        },
-        {
-          title: "View",
-          url: "/templates",
-        },
-      ],
-    },
-    {
-      title: "Automations",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Webhooks",
-          url: "#",
-        },
-        {
-          title: "Scripts",
-          url: "#",
-        },
+import { removeAccessToken } from "@/lib/auth"
+import { useRouter, useParams } from 'next/navigation'
+import Cookies from 'js-cookie'
+import { useEffect, useState } from 'react'
 
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "AI Generator",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+export default function AppSidebar() {
+  const params = useParams()
+  const organizationId = params?.organizationId as string
+  const router = useRouter()
+  
+  const [username, setUsername] = useState<string>('')
+  const [userEmail, setEmail] = useState<string>('')
+  const [userAvatar, setAvatar] = useState<string>('')
 
-export default function Page() {
+  useEffect(() => {
+    // Get cookie value after component mounts
+    setUsername(Cookies.get('profile-username') || '')
+    setEmail(Cookies.get('profile-email') || '')
+    setAvatar(Cookies.get('profile-picture') || '')
+  }, [])
+
+  const data = {
+    user: {
+      name: "donnaloia",
+      email:"ben@example.com",
+      avatar: "/avatars/shadcn.png",
+    },
+    navMain: [
+      {
+        title: "Campaign",
+        url: `/organization/${organizationId}/campaigns`,
+        icon: SquareTerminal,
+        isActive: true,
+        items: [
+          {
+            title: "New",
+            url: `/organization/${organizationId}/campaigns/create`,
+          },   
+          {
+            title: "Latest",
+            url: `/organization/${organizationId}/campaigns`,
+          },
+          {
+            title: "Scheduled",
+            url: `/organization/${organizationId}/campaigns`,
+          },
+          {
+            title: "Past",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Email Groups",
+        url: `/organization/${organizationId}/email-groups`,
+        icon: Bot,
+        items: [
+          {
+            title: "Create",
+            url: `/organization/${organizationId}/campaigns/email-groups/create`,
+          },
+          {
+            title: "View",
+            url: `/organization/${organizationId}/email-groups`,
+          },
+        ],
+      },
+      {
+        title: "Email Addresses",
+        url: `/organization/${organizationId}/email-addresses`,
+        icon: Bot,
+        items: [
+          {
+            title: "Create",
+            url: `/organization/${organizationId}/email-addresses/create`,
+          },
+          {
+            title: "View",
+            url: `/organization/${organizationId}/email-addresses`,
+          },
+        ],
+      },
+      {
+        title: "Templates",
+        url: `/organization/${organizationId}/templates`,
+        icon: Bot,
+        items: [
+          {
+            title: "Create",
+            url: `/organization/${organizationId}/templates`,
+          },
+          {
+            title: "View",
+            url: `/organization/${organizationId}/templates`,
+          },
+        ],
+      },
+      {
+        title: "Automations",
+        url: "#",
+        icon: BookOpen,
+        items: [
+          {
+            title: "Webhooks",
+            url: "#",
+          },
+          {
+            title: "Scripts",
+            url: "#",
+          },
+
+        ],
+      },
+      {
+        title: "Settings",
+        url: "#",
+        icon: Settings2,
+        items: [
+          {
+            title: "General",
+            url: "#",
+          },
+          {
+            title: "Team",
+            url: "#",
+          },
+          {
+            title: "Billing",
+            url: "#",
+          },
+          {
+            title: "Limits",
+            url: "#",
+          },
+        ],
+      },
+    ],
+    navSecondary: [
+      {
+        title: "Support",
+        url: "#",
+        icon: LifeBuoy,
+      },
+      {
+        title: "Feedback",
+        url: "#",
+        icon: Send,
+      },
+    ],
+    projects: [
+      {
+        name: "Design Engineering",
+        url: "#",
+        icon: Frame,
+      },
+      {
+        name: "Sales & Marketing",
+        url: "#",
+        icon: PieChart,
+      },
+      {
+        name: "AI Generator",
+        url: "#",
+        icon: Map,
+      },
+    ],
+  }
+
   return (
     <SidebarProvider>
-      <Sidebar variant="inset">
+      <Sidebar variant="inset" className="min-h-screen">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -360,17 +380,17 @@ export default function Page() {
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
-                        src={data.user.avatar}
-                        alt={data.user.name}
+                        src={userAvatar}
+                        alt={username}
                       />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {data.user.name}
+                        {username}
                       </span>
                       <span className="truncate text-xs">
-                        {data.user.email}
+                        {userEmail}
                       </span>
                     </div>
                     <ChevronsUpDown className="ml-auto size-4" />
@@ -395,10 +415,10 @@ export default function Page() {
                       </Avatar>
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
-                          {data.user.name}
+                          {username}
                         </span>
                         <span className="truncate text-xs">
-                          {data.user.email}
+                          {userEmail}
                         </span>
                       </div>
                     </div>
@@ -426,7 +446,10 @@ export default function Page() {
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    removeAccessToken()
+                    router.refresh()
+                  }}>
                     <LogOut />
                     Log out
                   </DropdownMenuItem>

@@ -25,21 +25,23 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+import { Button } from "@/components/ui/button"
+
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[]
   data: TData[]
   pageCount: number
   currentPage: number
   onPageChange: (page: number) => void
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData>({
   columns,
   data,
   pageCount,
   currentPage,
   onPageChange,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
@@ -50,11 +52,14 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-[#412C72]/5">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead 
+                    key={header.id}
+                    className="px-4"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -74,7 +79,10 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell 
+                      key={cell.id}
+                      className="px-4"
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -90,52 +98,26 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => {
-                const prevPage = currentPage - 1;
-                console.log('Previous clicked, going to page:', prevPage);
-                if (currentPage > 1) {
-                  onPageChange(prevPage);
-                }
-              }}
-              className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-          
-          {[...Array(pageCount)].map((_, i) => (
-            <PaginationItem key={i + 1}>
-              <PaginationLink
-                href="#"
-                isActive={currentPage === i + 1}
-                onClick={(e) => {
-                  e.preventDefault();
-                  const pageNumber = i + 1;
-                  console.log('Page number clicked:', pageNumber);
-                  onPageChange(pageNumber);
-                }}
-              >
-                {i + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => {
-                const nextPage = currentPage + 1;
-                console.log('Next clicked, going to page:', nextPage);
-                if (currentPage < pageCount) {
-                  onPageChange(nextPage);
-                }
-              }}
-              className={currentPage >= pageCount ? "pointer-events-none opacity-50" : ""}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <div className="flex items-center justify-end space-x-2 py-1">
+        <Button
+          variant="outline"
+          size="default"
+          className="h-9 px-5 text-base"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="default"
+          className="h-9 px-5 text-base"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === pageCount}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   )
 }

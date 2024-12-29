@@ -12,12 +12,11 @@ import { TypeAnimation } from 'react-type-animation'
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { createCampaign } from "./create/actions"
+import { createTemplate } from "./create/actions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
-
 import { Label } from "@/components/ui/label"
 
-type Campaign = {
+type Template = {
   id: string
   name: string
   created_at: string
@@ -25,19 +24,19 @@ type Campaign = {
 }
 
 type ApiResponse = {
-  results: Campaign[]
+  results: Template[]
   current_page: number
   total_pages: number
   total: number
 }
 
-export default function CampaignsPage({
+export default function TemplatesPage({
   params,
 }: {
   params: Promise<{ organizationId: string }>
 }) {
   const { organizationId } = use(params)
-  const [data, setData] = useState<Campaign[]>([])
+  const [data, setData] = useState<Template[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
   const [error, setError] = useState<string>("")
@@ -54,7 +53,7 @@ export default function CampaignsPage({
       
       try {
         console.log('Fetching page:', currentPage)
-        const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/campaigns?page=${currentPage}`, {
+        const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/templates?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -74,7 +73,7 @@ export default function CampaignsPage({
           router.push('/login')
         }
         console.error('Fetch error:', err)
-        setError("Failed to load campaigns. Please try again later.")
+        setError("Failed to load templates. Please try again later.")
         setData([])
       } finally {
         setIsLoading(false)
@@ -93,39 +92,21 @@ export default function CampaignsPage({
     const name = formData.get('name') as string
     
     if (!name || name.trim() === '') {
-      setNameError("Campaign name is required")
+      setNameError("Template name is required")
       return
     }
     
     setNameError("")
-    await createCampaign(organizationId, formData)
+    await createTemplate(organizationId, formData)
   }
 
   return (
     <div className="flex-1 space-y-12 p-16 pt-14">
       <div className="flex items-center justify-between mb-12 pl-4">
         <div className="space-y-6">
-          <h2 className="text-5xl font-bold tracking-tight text-[#412C72]">Campaigns</h2>
+          <h2 className="text-5xl font-bold tracking-tight text-[#412C72]">Templates</h2>
           <p className="text-muted-foreground text-2xl font-light leading-relaxed tracking-wide max-w-3xl font-['Helvetica']">
-            Manage your email campaigns here.  Focus a target group of recipients, write a new email from scratch or start with an existing template.  Then finally, schedule a send date and <br/>blast off your 
-            <span className="font-medium text-[#412C72]">
-              <TypeAnimation
-                sequence={[
-                  ' monthly newsletter ',
-                  1000,
-                  ' anniversary email ',
-                  1000,
-                  ' seasonal sales reminder ',
-                  1000,
-                  ' back in stock notification ',
-                  1000,
-                  ' lots of emails ',
-                ]}
-                wrapper="span"
-                speed={36}
-                repeat={0}
-              />
-            </span>
+            Manage your email templates here. Create reusable templates for your campaigns, customize them with dynamic content, and ensure consistent messaging across your communications.
           </p>
         </div>
       </div>
@@ -143,7 +124,7 @@ export default function CampaignsPage({
               <div className="relative w-[32rem]">
                 <Search className="absolute left-2 top-3.5 h-5 w-5 text-[#5B3E9E]/50" />
                 <Input
-                  placeholder="Search campaigns..."
+                  placeholder="Search templates..."
                   className="w-full pl-8 placeholder:text-[#5B3E9E]/50 text-lg h-12 text-base"
                   style={{ fontSize: '1.125rem', paddingLeft: '2.5rem' }}
                   onChange={(e) => {
@@ -155,30 +136,36 @@ export default function CampaignsPage({
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="bg-[#ac3f3f] text-[#e9d3ff] hover:bg-[#ac3f3f]/90 text-base px-4 py-6">
-                    Create Campaign<Plus className="ml-0.5 h-6 w-6 stroke-[4]" />
+                    Create Template <Plus className="ml-1 h-6 w-6 stroke-[4]" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="space-y-6">
                   <DialogHeader className="space-y-4">
-                    <DialogTitle className="text-2xl">Create Campaign</DialogTitle>
+                    <DialogTitle className="text-2xl">Create Template</DialogTitle>
                     <DialogDescription>
-                      Create a new campaign to send to your recipients.
+                      Create a new template for your email campaigns.
                     </DialogDescription>
                   </DialogHeader>
                   <form action={onSubmit} className="space-y-6">
                     <div className="space-y-4">
-                      <Label htmlFor="name">Campaign Name</Label>
+                      <Label htmlFor="name">Template Name</Label>
                       <Input 
                         id="name" 
                         name="name" 
-                        placeholder="Enter campaign name" 
+                        placeholder="Enter template name" 
+                        className="h-12" 
+                      />
+                      <Input 
+                        id="html" 
+                        name="html" 
+                        placeholder="Enter template HTML" 
                         className="h-12" 
                       />
                       {nameError && (
                         <p className="text-sm text-red-500">{nameError}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full py-6">Create Campaign</Button>
+                    <Button type="submit" className="w-full py-6">Create Template</Button>
                   </form>
                 </DialogContent>
               </Dialog>
@@ -195,4 +182,4 @@ export default function CampaignsPage({
       </div>
     </div>
   )
-}
+} 

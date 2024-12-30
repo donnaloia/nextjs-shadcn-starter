@@ -71,7 +71,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { removeAccessToken } from "@/lib/auth"
+
+import { removeAccessToken } from "@/lib/auth/access-token"
 import { useRouter, useParams } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'

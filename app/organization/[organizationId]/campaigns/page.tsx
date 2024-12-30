@@ -5,7 +5,7 @@ import { DataTable } from "@/components/shared/data-table"
 import { columns } from "./columns"
 import { TableSkeleton } from "@/components/shared/table-skeleton"
 import { getAccessToken} from "@/lib/client-auth"
-import { removeAccessToken } from "@/lib/auth"
+import { removeAccessToken } from "@/lib/auth/access-token"
 import { useRouter } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { TypeAnimation } from 'react-type-animation'
@@ -53,7 +53,6 @@ export default function CampaignsPage({
       setError("")
       
       try {
-        console.log('Fetching page:', currentPage)
         const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/campaigns?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,

@@ -17,6 +17,7 @@ export async function createTemplate(organizationId: string, formData: FormData)
       },
       body: JSON.stringify({
         name: formData.get('name'),
+        html: formData.get('html'),
       }),
     }
   )

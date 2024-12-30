@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getPermissions } from './lib/permissions'
-import { removeAccessToken } from './lib/auth'
+import { getPermissions } from './lib/auth/permissions'
+import { removeAccessToken } from './lib/auth/access-token'
 
 export async function middleware(request: NextRequest) {
   // Skip middleware for register paths

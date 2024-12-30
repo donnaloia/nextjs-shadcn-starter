@@ -13,7 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { loginUser } from "@/lib/auth"
+import { loginUser } from "@/lib/login-user"
 
 export default function LoginPage() {
   const router = useRouter()

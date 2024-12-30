@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import { cookies } from 'next/headers'
 
+
 interface Organization {
   name: string              // Must have a name property
   [key: string]: unknown    // Can have any other properties

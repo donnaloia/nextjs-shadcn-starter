@@ -2,17 +2,19 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
+import { ChevronsUpDown, Link, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
 
 type Campaign = {
   id: string
   name: string
   created_at: string
   status: "launched" | "scheduled" | "unscheduled"
+  organization_id: string
 }
 
 export const columns: ColumnDef<Campaign, unknown>[] = [
@@ -85,6 +87,7 @@ export const columns: ColumnDef<Campaign, unknown>[] = [
     ),
     cell: ({ row }) => {
       const campaign = row.original
+      const router = useRouter()
 
       return (
         <DropdownMenu>
@@ -102,7 +105,11 @@ export const columns: ColumnDef<Campaign, unknown>[] = [
               Copy campaign ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View campaign</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/organization/${campaign.organization_id}/campaigns/${campaign.id}`)}
+            >
+              View campaign
+            </DropdownMenuItem>
             <DropdownMenuItem>View analytics</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

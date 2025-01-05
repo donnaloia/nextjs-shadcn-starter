@@ -4,29 +4,45 @@ import { getEmailGroups } from "./actions"
 import { getCampaign } from "./actions"
 import { Toaster } from "@/components/ui/toaster"
 
+async function getPageData(organizationId: string, campaignId: string) {
+  return await Promise.all([
+    getCampaign(organizationId, campaignId),
+    getTemplates(organizationId),
+    getEmailGroups(organizationId)
+  ])
+}
 
 export default async function CampaignPage({
   params,
 }: {
-  params: { organizationId: string; campaignId: string }
+  params: Promise<{ organizationId: string; campaignId: string }>
 }) {
-  const [campaign, templatesData, emailGroupsData] = await Promise.all([
-    getCampaign(params.organizationId, params.campaignId),
-    getTemplates(params.organizationId),
-    getEmailGroups(params.organizationId)
-  ])
+  try {
+    const { organizationId, campaignId } = await params
 
-  return (
-    <>
-      <CampaignForm 
-        templates={templatesData.results} 
-        emailGroups={emailGroupsData.results}
-        organizationId={params.organizationId}
-        campaignId={params.campaignId}
-        campaignName={campaign.name}
-        defaultTemplate={campaign.templates[0]?.id}
-      />
-      <Toaster />
-    </>
-  )
+    const [campaign, templatesData, emailGroupsData] = await getPageData(
+      organizationId,
+      campaignId
+    )
+
+    const defaultTemplateId = campaign?.templates?.[0]?.id || ""
+
+    return (
+      <div className="pt-8 pl-8">
+        <CampaignForm 
+          templates={templatesData.results} 
+          emailGroups={emailGroupsData.results}
+          organizationId={organizationId}
+          campaignId={campaignId}
+          campaignName={campaign.name}
+          defaultTemplate={defaultTemplateId}
+          defaultEmailGroups={campaign.email_groups}
+        />
+        <Toaster />
+      </div>
+    )
+  } catch (error) {
+    console.error('Error loading campaign page:', error)
+    throw error
+  }
 } 

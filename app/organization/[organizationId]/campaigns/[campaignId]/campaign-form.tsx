@@ -16,6 +16,17 @@ import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { updateCampaign } from "./actions"
 import { useToast } from "@/hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type Template = {
   id: string
@@ -38,7 +49,8 @@ export function CampaignForm({
   campaignName = "New Campaign",
   organizationId,
   campaignId,
-  defaultTemplate = ""
+  defaultTemplate = "",
+  defaultEmailGroups = []
 }: { 
   templates: Template[]
   emailGroups: EmailGroup[]
@@ -46,9 +58,10 @@ export function CampaignForm({
   organizationId: string
   campaignId: string
   defaultTemplate?: string
+  defaultEmailGroups?: string[]
 }) {
   const [selectedTemplate, setSelectedTemplate] = useState<string>(defaultTemplate)
-  const [selectedGroups, setSelectedGroups] = useState<string[]>([])
+  const [selectedGroups, setSelectedGroups] = useState<string[]>(defaultEmailGroups)
   const [name, setName] = useState(campaignName)
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date>()
@@ -89,9 +102,9 @@ export function CampaignForm({
 
   return (
     <div className="max-w-[2400px] mx-auto p-6">
-      <div className="mt-8 pl-8">
+      <div className="pt-8 pl-10">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">{name}</h1>
+          <h1 className="text-4xl font-bold tracking-tight pl-2">{name}</h1>
         </div>
 
         <div className="grid grid-cols-20 gap-6">
@@ -101,11 +114,11 @@ export function CampaignForm({
               <CardHeader>
                 <CardTitle>Campaign Settings</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6 flex-grow">
+              <CardContent className="space-y-12 flex-grow">
                 <div className="space-y-6 h-full flex flex-col">
-                  <div className="space-y-6 flex-grow">
+                  <div className="space-y-6 pt-2 flex-grow">
                     <div>
-                      <h2 className="text-lg font-medium mb-2">Campaign Name</h2>
+                      <h2 className="text-lg font-medium mb-4">Campaign Name</h2>
                       <Input 
                         value={name} 
                         onChange={(e) => setName(e.target.value)}
@@ -196,9 +209,25 @@ export function CampaignForm({
                     </div>
                   </div>
 
-                  <Button variant="destructive" className="w-full" onClick={handleSave}>
-                    Run Campaign
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full text-base font-semibold py-6">
+                        Blast Off   🚀 
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action will immediately send emails to all recipients in the selected groups.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleSave}>Confirm</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </CardContent>
             </Card>
@@ -214,7 +243,7 @@ export function CampaignForm({
                   <CardHeader>
                     <CardTitle>Template Preview</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="flex flex-col">
                     {selectedTemplate ? (
                       <div 
                         className="h-[calc(90vh-22rem)] border rounded-lg p-4 overflow-auto"
@@ -225,8 +254,10 @@ export function CampaignForm({
                         Select a template to preview
                       </div>
                     )}
-                    <div className="flex justify-end">
-                      <Button onClick={handleSave}>Save Campaign</Button>
+                    <div className="flex justify-end mt-6">
+                      <Button onClick={handleSave} className="text-base font-semibold py-6">
+                        Save Campaign
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

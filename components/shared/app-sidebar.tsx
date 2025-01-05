@@ -76,6 +76,7 @@ import { removeAccessToken } from "@/lib/auth/access-token"
 import { useRouter, useParams } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
+import { ProfileEditPopover } from "@/components/shared/profile-edit-popover"
 
 export default function AppSidebar() {
   const params = useParams()
@@ -85,6 +86,7 @@ export default function AppSidebar() {
   const [username, setUsername] = useState<string>('')
   const [userEmail, setEmail] = useState<string>('')
   const [userAvatar, setAvatar] = useState<string>('')
+  const [profileOpen, setProfileOpen] = useState(false)
 
   useEffect(() => {
     // Get cookie value after component mounts
@@ -268,7 +270,6 @@ export default function AppSidebar() {
                 <Collapsible
                   key={item.title}
                   asChild
-                  defaultOpen={item.isActive}
                 >
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild tooltip={item.title}>
@@ -373,7 +374,7 @@ export default function AppSidebar() {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <DropdownMenu>
+              <DropdownMenu open={profileOpen} onOpenChange={setProfileOpen}>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
                     size="lg"
@@ -433,9 +434,19 @@ export default function AppSidebar() {
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <BadgeCheck />
-                      Account
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <ProfileEditPopover
+                        trigger={
+                          <div className="flex w-full items-center">
+                            <BadgeCheck className="mr-2 h-4 w-4" />
+                            <span>Account</span>
+                          </div>
+                        }
+                        username={username}
+                        userEmail={userEmail}
+                        userAvatar={userAvatar}
+                        onOpenChange={(open) => setProfileOpen(open)}
+                      />
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <CreditCard />

@@ -60,7 +60,7 @@ export const columns: ColumnDef<Campaign, unknown>[] = [
       </div>
     ),
     cell: ({ row }) => {
-      const status = "launched"
+      const status = row.getValue("status") as "launched" | "scheduled" | "unscheduled"
       return (
         <div className="py-2">
           <Badge 

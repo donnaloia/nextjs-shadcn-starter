@@ -54,7 +54,9 @@ export async function getOrCreateProfile(organizationId: string, userUuid: strin
         })
       } else {
         const newProfileData = await createProfileResponse.json()
-        console.log('New profile created:', newProfileData)
+        cookieStore.set('profile-username', newProfileData.username)
+        cookieStore.set('profile-email', newProfileData.email)
+        cookieStore.set('profile-picture', newProfileData.picture_url)
       }
     }
   } catch (error) {

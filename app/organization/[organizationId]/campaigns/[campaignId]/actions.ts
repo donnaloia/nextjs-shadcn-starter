@@ -63,7 +63,7 @@ export async function updateCampaign(
 ) {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get('access-token')?.value
-
+  console.log(JSON.stringify(data))
   const response = await fetch(
     `http://localhost:8080/api/v1/organizations/${organizationId}/campaigns/${campaignId}`, 
     {

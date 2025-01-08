@@ -5,7 +5,7 @@ This is the frontend for the sendPulse project written in React.js, Next.js, Typ
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-![example workflow](https://github.com/donnaloia/email-campaign-service/actions/workflows/docker-build-push.yml/badge.svg)
+![example workflow](https://github.com/donnaloia/sendPulse-frontend/actions/workflows/docker-build-push.yml/badge.svg)
 
 
 ## Features

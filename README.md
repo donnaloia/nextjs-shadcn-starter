@@ -13,7 +13,7 @@ This is the frontend for the sendPulse project written in React.js, Next.js, Typ
 - manages the entire user journey from signup to login to email campaign creation and sending
 - manages Authentication and Authorization via server-side requests to external auth services
 - leverages Effect.js for cleaner, more predictable, and more testable code
-- see it deployed in an event-driven, distributed system here: [SendPulse](https://github.com/donnaloia/sendpulse)
+- see it deployed in an event-driven, distributed system here: [sendPulse](https://github.com/donnaloia/sendpulse)
 
 
 ## Tech Stack

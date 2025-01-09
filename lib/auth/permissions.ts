@@ -25,8 +25,10 @@ export const getPermissions = cache(async () => {
     }
   }
 
+  const PERMISSIONS_SERVICE_URL = process.env.PERMISSIONS_SERVICE_URL || 'http://localhost:8000'
+
   const response = await fetch(
-    `http://localhost:8000/api/permissions/${userUuid.value}`,
+    `${PERMISSIONS_SERVICE_URL}/api/permissions/${userUuid.value}`,
     {
       headers: {
         'Authorization': `Bearer ${token.value}`,

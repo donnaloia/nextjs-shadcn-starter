@@ -10,10 +10,13 @@ interface UserResponse {
   id: string
 }
 
+const AUTHENTICATION_SERVICE_URL = process.env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8081'
+const PERMISSIONS_SERVICE_URL = process.env.PERMISSIONS_SERVICE_URL || 'http://localhost:8000'
+
 export async function registerUser(organizationId: string, data: RegistrationData) {
   try {
     // First, register the user
-    const userResponse = await fetch('http://localhost:8081/users', {
+    const userResponse = await fetch(`${AUTHENTICATION_SERVICE_URL}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +40,7 @@ export async function registerUser(organizationId: string, data: RegistrationDat
     }
 
     // Then, set up initial permissions
-    const permissionsResponse = await fetch('http://localhost:8000/api/permissions', {
+    const permissionsResponse = await fetch(`${PERMISSIONS_SERVICE_URL}/api/permissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -30,6 +30,7 @@ type ApiResponse = {
   total_pages: number
   total: number
 }
+const EMAIL_CAMPAIGN_SERVICE_URL = process.env.EMAIL_CAMPAIGN_SERVICE_URL || 'http://localhost:8080/api/v1'
 
 export default function CampaignsPage({
   params,
@@ -53,7 +54,7 @@ export default function CampaignsPage({
       setError("")
       
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/campaigns?page=${currentPage}`, {
+        const response = await fetch(`${EMAIL_CAMPAIGN_SERVICE_URL}/organizations/${organizationId}/campaigns?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',

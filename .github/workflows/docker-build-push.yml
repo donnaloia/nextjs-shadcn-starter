@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - 'sendPulse-frontend/**'
+      - '**'
       - '.github/workflows/docker-build-push.yml'
 
 

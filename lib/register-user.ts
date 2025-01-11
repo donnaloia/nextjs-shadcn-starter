@@ -10,10 +10,13 @@ interface UserResponse {
   id: string
 }
 
+const AUTHENTICATION_SERVICE_URL = process.env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8081'
+const PERMISSIONS_SERVICE_URL = process.env.PERMISSIONS_SERVICE_URL || 'http://localhost:8000'
+
 export async function registerUser(organizationId: string, data: RegistrationData) {
   try {
     // First, register the user
-    const userResponse = await fetch('http://localhost:8081/users', {
+    const userResponse = await fetch(`${AUTHENTICATION_SERVICE_URL}/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +40,7 @@ export async function registerUser(organizationId: string, data: RegistrationDat
     }
 
     // Then, set up initial permissions
-    const permissionsResponse = await fetch('http://localhost:8000/api/permissions', {
+    const permissionsResponse = await fetch(`${PERMISSIONS_SERVICE_URL}/api/permissions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +61,18 @@ export async function registerUser(organizationId: string, data: RegistrationDat
     })
 
     if (!permissionsResponse.ok) {
-      throw new Error('Permissions setup failed')
+      switch (permissionsResponse.status) {
+        case 401:
+          throw new Error('Session expired. Please login again')
+        case 409:
+          throw new Error('User Permissions already exist')
+        case 404:
+          throw new Error('No permissions found for user')
+        case 500:
+          throw new Error('Permissions server error. Please try again later')
+        default:
+          throw new Error('Failed to reach permissions server. Please try again later')
+      }
     }
 
     return { success: true, user }

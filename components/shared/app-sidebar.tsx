@@ -22,6 +22,7 @@ import {
   Sparkles,
   SquareTerminal,
   Trash2,
+  BarChart2,
 } from "lucide-react"
 
 import {
@@ -110,7 +111,7 @@ export default function AppSidebar() {
         items: [
           {
             title: "New",
-            url: `/organization/${organizationId}/campaigns/create`,
+            url: `/organization/${organizationId}/campaigns?create=true`,
           },   
           {
             title: "Latest",
@@ -133,7 +134,7 @@ export default function AppSidebar() {
         items: [
           {
             title: "Create",
-            url: `/organization/${organizationId}/campaigns/email-groups/create`,
+            url: `/organization/${organizationId}/email-groups?create=true`,
           },
           {
             title: "View",
@@ -148,7 +149,7 @@ export default function AppSidebar() {
         items: [
           {
             title: "Create",
-            url: `/organization/${organizationId}/email-addresses/create`,
+            url: `/organization/${organizationId}/email-addresses?create=true`,
           },
           {
             title: "View",
@@ -163,7 +164,7 @@ export default function AppSidebar() {
         items: [
           {
             title: "Create",
-            url: `/organization/${organizationId}/templates`,
+            url: `/organization/${organizationId}/templates?create=true`,
           },
           {
             title: "View",
@@ -187,28 +188,17 @@ export default function AppSidebar() {
 
         ],
       },
+    ],
+    navAnalytics: [
       {
-        title: "Settings",
-        url: "#",
-        icon: Settings2,
-        items: [
-          {
-            title: "General",
-            url: "#",
-          },
-          {
-            title: "Team",
-            url: "#",
-          },
-          {
-            title: "Billing",
-            url: "#",
-          },
-          {
-            title: "Limits",
-            url: "#",
-          },
-        ],
+        title: "Engagement",
+        url: "/",
+        icon: PieChart,
+      },
+      {
+        title: "Performance",
+        url: "/",
+        icon: BarChart2,
       },
     ],
     navSecondary: [
@@ -253,9 +243,9 @@ export default function AppSidebar() {
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <Command className="size-4" />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Acme Inc</span>
-                    <span className="truncate text-xs">Enterprise</span>
+                  <div className="grid flex-1 text-left leading-tight">
+                    <span className="truncate font-semibold text-base">Acme Inc</span>
+                    <span className="truncate text-sm">Enterprise</span>
                   </div>
                 </a>
               </SidebarMenuButton>
@@ -264,7 +254,7 @@ export default function AppSidebar() {
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel className="text-[#412C72]">Platform</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-[#412C72] text-base">Platform</SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
@@ -272,7 +262,7 @@ export default function AppSidebar() {
                   asChild
                 >
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title} className="text-base">
                       <a href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
@@ -290,7 +280,7 @@ export default function AppSidebar() {
                           <SidebarMenuSub>
                             {item.items?.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
-                                <SidebarMenuSubButton asChild>
+                                <SidebarMenuSubButton asChild className="text-base">
                                   <a href={subItem.url}>
                                     <span>{subItem.title}</span>
                                   </a>
@@ -306,12 +296,27 @@ export default function AppSidebar() {
               ))}
             </SidebarMenu>
           </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-[#412C72] text-base">Analytics</SidebarGroupLabel>
+            <SidebarMenu>
+              {data.navAnalytics.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className="text-base">
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel className="text-[#412C72]">Projects</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-[#412C72] text-base">Projects</SidebarGroupLabel>
             <SidebarMenu>
               {data.projects.map((item) => (
                 <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild className="text-base">
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.name}</span>
@@ -346,12 +351,6 @@ export default function AppSidebar() {
                   </DropdownMenu>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <MoreHorizontal />
-                  <span>More</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
           <SidebarGroup className="mt-auto">
@@ -359,7 +358,7 @@ export default function AppSidebar() {
               <SidebarMenu>
                 {data.navSecondary.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild size="sm">
+                    <SidebarMenuButton asChild size="sm" className="text-base">
                       <a href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
@@ -387,11 +386,11 @@ export default function AppSidebar() {
                       />
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-base leading-tight">
                       <span className="truncate font-semibold">
                         {username}
                       </span>
-                      <span className="truncate text-xs">
+                      <span className="truncate text-sm">
                         {userEmail}
                       </span>
                     </div>
@@ -405,7 +404,7 @@ export default function AppSidebar() {
                   sideOffset={4}
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-base">
                       <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage
                           src={data.user.avatar}
@@ -415,11 +414,11 @@ export default function AppSidebar() {
                           CN
                         </AvatarFallback>
                       </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
+                      <div className="grid flex-1 text-left text-base leading-tight">
                         <span className="truncate font-semibold">
                           {username}
                         </span>
-                        <span className="truncate text-xs">
+                        <span className="truncate text-sm">
                           {userEmail}
                         </span>
                       </div>
@@ -427,14 +426,14 @@ export default function AppSidebar() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-base">
                       <Sparkles />
                       Upgrade to Pro
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-base">
                       <ProfileEditPopover
                         trigger={
                           <div className="flex w-full items-center">
@@ -448,11 +447,11 @@ export default function AppSidebar() {
                         onOpenChange={(open) => setProfileOpen(open)}
                       />
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-base">
                       <CreditCard />
                       Billing
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem className="text-base">
                       <Bell />
                       Notifications
                     </DropdownMenuItem>
@@ -461,7 +460,7 @@ export default function AppSidebar() {
                   <DropdownMenuItem onClick={() => {
                     removeAccessToken()
                     router.refresh()
-                  }}>
+                  }} className="text-base">
                     <LogOut />
                     Log out
                   </DropdownMenuItem>

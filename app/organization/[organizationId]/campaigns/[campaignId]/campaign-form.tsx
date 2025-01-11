@@ -60,16 +60,22 @@ export function CampaignForm({
   defaultTemplate?: string
   defaultEmailGroups?: string[]
 }) {
+  // Extract just the IDs from defaultEmailGroups
+  const defaultGroupIds = defaultEmailGroups.map(group => group.id)
+  console.log('defaultGroupIds:', defaultGroupIds)
+  
   const [selectedTemplate, setSelectedTemplate] = useState<string>(defaultTemplate)
-  const [selectedGroups, setSelectedGroups] = useState<string[]>(defaultEmailGroups)
+  const [selectedGroups, setSelectedGroups] = useState<string[]>(defaultGroupIds)  // Use IDs array
   const [name, setName] = useState(campaignName)
   const [open, setOpen] = useState(false)
   const [date, setDate] = useState<Date>()
   const { toast } = useToast()
 
   useEffect(() => {
-    setSelectedTemplate(defaultTemplate)
-  }, [defaultTemplate])
+    const newGroupIds = defaultEmailGroups.map(group => group.id)
+    console.log('Setting selectedGroups to:', newGroupIds)
+    setSelectedGroups(newGroupIds)
+  }, [defaultEmailGroups])
 
   const selectedTemplateHtml = templates.find(t => t.id === selectedTemplate)?.html || ""
   
@@ -123,20 +129,25 @@ export function CampaignForm({
                         value={name} 
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Enter campaign name"
+                        className="h-12 text-3xl px-4 placeholder:text-3xl text-[#412C72] font-semibold"
                       />
                     </div>
 
                     <div>
                       <h2 className="text-lg font-medium mb-4">Select Template</h2>
                       <Select defaultValue={defaultTemplate} value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12 text-base px-4 text-[#412C72]">
                           <SelectValue placeholder={templates.find(t => t.id === selectedTemplate)?.name || "Choose a template"}>
                             {templates.find(t => t.id === selectedTemplate)?.name}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {templates.map((template) => (
-                            <SelectItem key={template.id} value={template.id}>
+                            <SelectItem 
+                              key={template.id} 
+                              value={template.id}
+                              className="text-base py-2"
+                            >
                               {template.name}
                             </SelectItem>
                           ))}
@@ -151,7 +162,7 @@ export function CampaignForm({
                           variant="ghost"
                           role="combobox"
                           aria-expanded={open}
-                          className="w-full justify-between"
+                          className="w-full justify-between h-12 text-base px-4 text-[#412C72]"
                           onClick={() => setOpen(!open)}
                         >
                           {selectedGroups.length === 0
@@ -160,31 +171,33 @@ export function CampaignForm({
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                         {open && (
-                          <div className="p-4 space-y-4">
-                            {emailGroups.map((group) => (
-                              <div key={group.id} className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={group.id}
-                                  checked={selectedGroups.includes(group.id)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      setSelectedGroups([...selectedGroups, group.id])
-                                    } else {
-                                      setSelectedGroups(selectedGroups.filter(id => id !== group.id))
-                                    }
-                                  }}
-                                />
-                                <label
-                                  htmlFor={group.id}
-                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                >
-                                  {group.name}
-                                </label>
-                              </div>
-                            ))}
+                          <div className="p-4 space-y-4 max-h-[200px] overflow-y-auto">
+                            {emailGroups.map((group) => {
+                              const isChecked = selectedGroups.includes(group.id)
+                              return (
+                                <div key={group.id} className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={group.id}
+                                    checked={isChecked}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        setSelectedGroups([...selectedGroups, group.id])
+                                      } else {
+                                        setSelectedGroups(selectedGroups.filter(id => id !== group.id))
+                                      }
+                                    }}
+                                  />
+                                  <label
+                                    htmlFor={group.id}
+                                    className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                  >
+                                    {group.name}
+                                  </label>
+                                </div>
+                              )
+                            })}
                           </div>
                         )}
-
                       </div>
                     </div>
 
@@ -192,7 +205,10 @@ export function CampaignForm({
                       <h2 className="text-lg font-medium mb-4">Runs at</h2>
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="w-full">
+                          <Button 
+                            variant="outline" 
+                            className="w-full h-12 text-base px-4 text-[#412C72]"
+                          >
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {date ? format(date, "PPP") : "Schedule Campaign"}
                           </Button>
@@ -211,8 +227,8 @@ export function CampaignForm({
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="w-full text-base font-semibold py-6">
-                        Blast Off   🚀 
+                      <Button variant="destructive" className="w-full text-base font-semibold py-6 bg-[#ac3f3f]">
+                        Blast Off <span className="ml-2">🚀</span>
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>

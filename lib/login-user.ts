@@ -10,9 +10,11 @@ interface LoginResponse {
     access_token: string
   }
 
+const AUTHENTICATION_SERVICE_URL = process.env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8081'
+
 export async function loginUser(username: string, password: string) {
     try {
-      const response = await fetch('http://localhost:8081/login/', {
+      const response = await fetch(`${AUTHENTICATION_SERVICE_URL}/login/`, {
         method: 'POST',
         body: JSON.stringify({ username, password }),
         headers: {
@@ -27,8 +29,10 @@ export async function loginUser(username: string, password: string) {
             throw new Error('Invalid username or password')
           case 403:
             throw new Error('Account is locked. Please contact support')
+          case 505:
+            throw new Error('Authentication server error. Please try again later')
           default:
-            throw new Error(`Login failed: ${response.status} ${errorText}`)
+            throw new Error(`Failed to reach authentication server. Please try again later`)
         }
       }
   

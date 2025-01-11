@@ -75,8 +75,15 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
             <div className="space-y-2">
               <Label htmlFor="email" className="text-lg">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-2 top-3 h-5 w-5 text-muted-foreground" />
-                <Input id="email" type="email" defaultValue={userEmail} className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" />
+                <Mail className="absolute left-4 top-3 h-5 w-5 text-muted-foreground" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  defaultValue={userEmail}
+                  placeholder="Enter your email address" 
+                  style={{ fontSize: '1.25rem' }}
+                  className="pl-12 text-2xl h-12 placeholder:text-2xl text-2xl placeholder:text-gray-500 text-gray-500" 
+                />
               </div>
             </div>
             <div className="space-y-2">
@@ -91,15 +98,15 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
               <div className="space-y-2">
                 <Label htmlFor="organization" className="text-lg">Organization</Label>
                 <div className="relative">
-                  <Briefcase className="absolute left-2 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="organization" placeholder="Organization Name" className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" />
+                  <Briefcase className="absolute left-4 top-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="organization" placeholder="Organization Name" className="pl-12 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="timezone" className="text-lg">Timezone</Label>
                 <div className="relative">
-                  <Globe className="absolute left-2 top-3 h-5 w-5 text-muted-foreground" />
-                  <Input id="timezone" placeholder="UTC" className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" />
+                  <Globe className="absolute left-4 top-3 h-5 w-5 text-muted-foreground" />
+                  <Input id="timezone" placeholder="UTC" className="pl-12 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" />
                 </div>
               </div>
             </div>

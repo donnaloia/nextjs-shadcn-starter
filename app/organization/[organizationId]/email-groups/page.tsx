@@ -6,7 +6,7 @@ import { columns } from "./columns"
 import { TableSkeleton} from "@/components/shared/table-skeleton"
 import { getAccessToken} from "@/lib/client-auth"
 import { removeAccessToken } from "@/lib/auth/access-token"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { TypeAnimation } from 'react-type-animation'
 import { Search } from "lucide-react"
@@ -15,6 +15,7 @@ import { Plus } from "lucide-react"
 import { createEmailGroup } from "./create/actions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { EXTERNAL_URLS } from '@/lib/external-urls'
 
 type EmailGroup = {
   id: string
@@ -36,6 +37,8 @@ export default function EmailGroupsPage({
   params: Promise<{ organizationId: string }>
 }) {
   const { organizationId } = use(params)
+  const searchParams = useSearchParams()
+  const [open, setOpen] = useState(searchParams.get('create') === 'true')
   const [data, setData] = useState<EmailGroup[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
@@ -53,7 +56,7 @@ export default function EmailGroupsPage({
       
       try {
         console.log('Fetching page:', currentPage)
-        const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/email-groups?page=${currentPage}`, {
+        const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/email-groups?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -133,33 +136,38 @@ export default function EmailGroupsPage({
                   }}
                 />
               </div>
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-[#ac3f3f] text-[#e9d3ff] hover:bg-[#ac3f3f]/90 text-base px-4 py-6">
                     Create Email Group <Plus className="ml-1 h-6 w-6 stroke-[4]" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="space-y-6">
-                  <DialogHeader className="space-y-4">
-                    <DialogTitle className="text-2xl">Create Email Group</DialogTitle>
-                    <DialogDescription>
+                <DialogContent className="w-[600px] max-w-[90vw] p-0">
+                  <DialogHeader className="space-y-4 px-16 py-12">
+                    <DialogTitle className="text-3xl font-medium">Create Email Group</DialogTitle>
+                    <DialogDescription className="text-lg text-muted-foreground">
                       Create a new email group to organize your recipients.
                     </DialogDescription>
                   </DialogHeader>
-                  <form action={onSubmit} className="space-y-6">
+                  <form action={onSubmit} className="space-y-8 px-16 pb-12">
                     <div className="space-y-4">
-                      <Label htmlFor="name">Email Group Name</Label>
+                      <Label htmlFor="name" className="text-xl">Email Group Name</Label>
                       <Input 
                         id="name" 
                         name="name" 
                         placeholder="Enter email group name" 
-                        className="h-12" 
+                        style={{ fontSize: '1.25rem' }}
+                        className="h-12 placeholder:text-xl text-[#412C72] placeholder:text-gray-500 font-medium placeholder:font-medium" 
                       />
                       {nameError && (
-                        <p className="text-sm text-red-500">{nameError}</p>
+                        <p className="text-lg text-red-500">{nameError}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full py-6">Create Email Group</Button>
+                    <div className="pt-4">
+                      <Button type="submit" className="w-full py-6 text-xl">
+                        Create Email Group
+                      </Button>
+                    </div>
                   </form>
                 </DialogContent>
               </Dialog>

@@ -61,7 +61,18 @@ export async function registerUser(organizationId: string, data: RegistrationDat
     })
 
     if (!permissionsResponse.ok) {
-      throw new Error('Permissions setup failed')
+      switch (permissionsResponse.status) {
+        case 401:
+          throw new Error('Session expired. Please login again')
+        case 409:
+          throw new Error('User Permissions already exist')
+        case 404:
+          throw new Error('No permissions found for user')
+        case 500:
+          throw new Error('Permissions server error. Please try again later')
+        default:
+          throw new Error('Failed to reach permissions server. Please try again later')
+      }
     }
 
     return { success: true, user }

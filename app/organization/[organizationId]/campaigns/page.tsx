@@ -6,7 +6,7 @@ import { columns } from "./columns"
 import { TableSkeleton } from "@/components/shared/table-skeleton"
 import { getAccessToken} from "@/lib/client-auth"
 import { removeAccessToken } from "@/lib/auth/access-token"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { TypeAnimation } from 'react-type-animation'
 import { Search } from "lucide-react"
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { createCampaign } from "./create/actions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { EXTERNAL_URLS } from '@/lib/external-urls'
 
 import { Label } from "@/components/ui/label"
 
@@ -30,7 +31,6 @@ type ApiResponse = {
   total_pages: number
   total: number
 }
-const EMAIL_CAMPAIGN_SERVICE_URL = process.env.EMAIL_CAMPAIGN_SERVICE_URL || 'http://localhost:8080/api/v1'
 
 export default function CampaignsPage({
   params,
@@ -38,6 +38,8 @@ export default function CampaignsPage({
   params: Promise<{ organizationId: string }>
 }) {
   const { organizationId } = use(params)
+  const searchParams = useSearchParams()
+  const [open, setOpen] = useState(searchParams.get('create') === 'true')
   const [data, setData] = useState<Campaign[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
@@ -54,7 +56,7 @@ export default function CampaignsPage({
       setError("")
       
       try {
-        const response = await fetch(`${EMAIL_CAMPAIGN_SERVICE_URL}/organizations/${organizationId}/campaigns?page=${currentPage}`, {
+        const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/campaigns?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -152,33 +154,38 @@ export default function CampaignsPage({
                   }}
                 />
               </div>
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-[#ac3f3f] text-[#e9d3ff] hover:bg-[#ac3f3f]/90 text-base px-4 py-6">
-                    Create Campaign<Plus className="ml-0.5 h-6 w-6 stroke-[4]" />
+                    Create Campaign <Plus className="ml-1 h-6 w-6 stroke-[4]" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="space-y-6">
-                  <DialogHeader className="space-y-4">
-                    <DialogTitle className="text-2xl">Create Campaign</DialogTitle>
-                    <DialogDescription>
+                <DialogContent className="w-[600px] max-w-[90vw] p-0">
+                  <DialogHeader className="space-y-4 px-16 py-12">
+                    <DialogTitle className="text-3xl font-medium">Create Campaign</DialogTitle>
+                    <DialogDescription className="text-lg text-muted-foreground">
                       Create a new campaign to send to your recipients.
                     </DialogDescription>
                   </DialogHeader>
-                  <form action={onSubmit} className="space-y-6">
+                  <form action={onSubmit} className="space-y-8 px-16 pb-12">
                     <div className="space-y-4">
-                      <Label htmlFor="name">Campaign Name</Label>
+                      <Label htmlFor="name" className="text-xl">Campaign Name</Label>
                       <Input 
                         id="name" 
                         name="name" 
                         placeholder="Enter campaign name" 
-                        className="h-12" 
+                        style={{ fontSize: '1.25rem' }}
+                        className="h-12 placeholder:text-xl text-[#412C72] placeholder:text-gray-500 font-medium placeholder:font-medium" 
                       />
                       {nameError && (
-                        <p className="text-sm text-red-500">{nameError}</p>
+                        <p className="text-lg text-red-500">{nameError}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full py-6">Create Campaign</Button>
+                    <div className="pt-4">
+                      <Button type="submit" className="w-full py-6 text-xl">
+                        Create Campaign
+                      </Button>
+                    </div>
                   </form>
                 </DialogContent>
               </Dialog>

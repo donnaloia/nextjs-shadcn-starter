@@ -6,15 +6,18 @@ import { columns } from "./columns"
 import { TableSkeleton } from "@/components/shared/table-skeleton"
 import { getAccessToken} from "@/lib/client-auth"
 import { removeAccessToken } from "@/lib/auth/access-token"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { TypeAnimation } from 'react-type-animation'
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { createTemplate } from "./create/actions"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { X } from "lucide-react"
+import { EXTERNAL_URLS } from '@/lib/external-urls'
 
 type Template = {
   id: string
@@ -36,6 +39,8 @@ export default function TemplatesPage({
   params: Promise<{ organizationId: string }>
 }) {
   const { organizationId } = use(params)
+  const searchParams = useSearchParams()
+  const [open, setOpen] = useState(searchParams.get('create') === 'true')
   const [data, setData] = useState<Template[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageCount, setPageCount] = useState(1)
@@ -53,7 +58,7 @@ export default function TemplatesPage({
       
       try {
         console.log('Fetching page:', currentPage)
-        const response = await fetch(`http://localhost:8080/api/v1/organizations/${organizationId}/templates?page=${currentPage}`, {
+        const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/templates?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -133,39 +138,52 @@ export default function TemplatesPage({
                   }}
                 />
               </div>
-              <Dialog>
+              <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-[#ac3f3f] text-[#e9d3ff] hover:bg-[#ac3f3f]/90 text-base px-4 py-6">
                     Create Template <Plus className="ml-1 h-6 w-6 stroke-[4]" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="space-y-6">
-                  <DialogHeader className="space-y-4">
-                    <DialogTitle className="text-2xl">Create Template</DialogTitle>
-                    <DialogDescription>
-                      Create a new template for your email campaigns.
+                <DialogContent className="w-[800px] max-w-[90vw] p-0">
+                  <DialogHeader className="space-y-4 px-16 py-12">
+                    <DialogTitle className="text-3xl font-bold">Create Template</DialogTitle>
+                    <DialogDescription className="text-lg text-muted-foreground">
+                      Create a new template for your email campaign.
                     </DialogDescription>
                   </DialogHeader>
-                  <form action={onSubmit} className="space-y-6">
-                    <div className="space-y-4">
-                      <Label htmlFor="name">Template Name</Label>
-                      <Input 
-                        id="name" 
-                        name="name" 
-                        placeholder="Enter template name" 
-                        className="h-12" 
-                      />
-                      <Input 
-                        id="html" 
-                        name="html" 
-                        placeholder="Enter template HTML" 
-                        className="h-12" 
-                      />
+                  <form action={onSubmit} className="space-y-4 px-16 mb-8">
+                    <div className="space-y-8">
+                      <div className="space-y-3">
+                        <Label htmlFor="name" className="text-xl">Template Name</Label>
+                        <Input 
+                          id="name" 
+                          name="name" 
+                          placeholder="Enter template name" 
+                          style={{ fontSize: '1.25rem' }}
+                          className="text-xl h-14 placeholder:text-xl placeholder:text-gray-500 text-gray-500" 
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <Label htmlFor="html" className="text-xl">Template HTML</Label>
+                        <Textarea 
+                          id="html" 
+                          name="html" 
+                          placeholder="Enter template HTML"
+                          style={{ fontSize: '1.25rem' }}
+                          className="min-h-[400px] text-xl resize-none placeholder:text-xl placeholder:text-gray-500 text-gray-500" 
+                        />
+                      </div>
                       {nameError && (
-                        <p className="text-sm text-red-500">{nameError}</p>
+                        <p className="text-lg text-red-500">{nameError}</p>
                       )}
                     </div>
-                    <Button type="submit" className="w-full py-6">Create Template</Button>
+
+                    <div className="py-4">
+                      <Button type="submit" className="w-full py-6 text-xl">
+                        Create Template
+                      </Button>
+                    </div>
+
                   </form>
                 </DialogContent>
               </Dialog>

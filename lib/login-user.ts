@@ -29,8 +29,10 @@ export async function loginUser(username: string, password: string) {
             throw new Error('Invalid username or password')
           case 403:
             throw new Error('Account is locked. Please contact support')
+          case 505:
+            throw new Error('Authentication server error. Please try again later')
           default:
-            throw new Error(`Login failed: ${response.status} ${errorText}`)
+            throw new Error(`Failed to reach authentication server. Please try again later`)
         }
       }
   

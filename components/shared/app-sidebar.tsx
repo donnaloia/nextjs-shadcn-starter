@@ -77,24 +77,15 @@ import { removeAccessToken } from "@/lib/auth/access-token"
 import { useRouter, useParams } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
-import { ProfileEditPopover } from "@/components/shared/profile-edit-popover"
+import { ProfileEditPopover } from "@/components/shared/profile-edit-popover/index"
+import { useProfile } from "@/lib/profile-context"
 
 export default function AppSidebar() {
+  const { username, email: userEmail, avatar: userAvatar, organizationName } = useProfile()
   const params = useParams()
   const organizationId = params?.organizationId as string
   const router = useRouter()
-  
-  const [username, setUsername] = useState<string>('')
-  const [userEmail, setEmail] = useState<string>('')
-  const [userAvatar, setAvatar] = useState<string>('')
   const [profileOpen, setProfileOpen] = useState(false)
-
-  useEffect(() => {
-    // Get cookie value after component mounts
-    setUsername(Cookies.get('profile-username') || '')
-    setEmail(Cookies.get('profile-email') || '')
-    setAvatar(Cookies.get('profile-picture') || '')
-  }, [])
 
   const data = {
     user: {
@@ -244,7 +235,7 @@ export default function AppSidebar() {
                     <Command className="size-4" />
                   </div>
                   <div className="grid flex-1 text-left leading-tight">
-                    <span className="truncate font-semibold text-base">Acme Inc</span>
+                    <span className="truncate font-semibold text-base">{organizationName}</span>
                     <span className="truncate text-sm">Enterprise</span>
                   </div>
                 </a>

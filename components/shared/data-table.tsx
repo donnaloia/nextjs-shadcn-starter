@@ -28,7 +28,7 @@ import {
 import { Button } from "@/components/ui/button"
 
 interface DataTableProps<TData> {
-  columns: ColumnDef<TData, any>[]
+  columns: ColumnDef<TData, unknown>[]
   data: TData[]
   pageCount: number
   currentPage: number

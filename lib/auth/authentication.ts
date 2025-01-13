@@ -20,11 +20,14 @@ export async function getOrCreateProfile(organizationId: string, userUuid: strin
 
     if (profileResponse.ok) {
       const profileData = await profileResponse.json()
-      console.log('Setting profile cookies:', profileData)
-      
       cookieStore.set('profile-username', profileData.username)
       cookieStore.set('profile-email', profileData.email)
       cookieStore.set('profile-picture', profileData.picture_url)
+      cookieStore.set('profile-first-name', profileData.first_name)
+      cookieStore.set('profile-last-name', profileData.last_name)
+      cookieStore.set('profile-bio', profileData.bio)
+      cookieStore.set('profile-timezone', profileData.timezone)
+      cookieStore.set('profile-notifications-enabled', profileData.notifications_enabled)
 
     } else {
 
@@ -57,6 +60,11 @@ export async function getOrCreateProfile(organizationId: string, userUuid: strin
         cookieStore.set('profile-username', newProfileData.username)
         cookieStore.set('profile-email', newProfileData.email)
         cookieStore.set('profile-picture', newProfileData.picture_url)
+        cookieStore.set('profile-first-name', '')
+        cookieStore.set('profile-last-name', '')
+        cookieStore.set('profile-bio', '')
+        cookieStore.set('profile-timezone', '')
+        cookieStore.set('profile-notifications-enabled', '')
       }
     }
   } catch (error) {

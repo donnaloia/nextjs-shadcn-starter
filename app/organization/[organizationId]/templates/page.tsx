@@ -57,7 +57,6 @@ export default function TemplatesPage({
       setError("")
       
       try {
-        console.log('Fetching page:', currentPage)
         const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/templates?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,

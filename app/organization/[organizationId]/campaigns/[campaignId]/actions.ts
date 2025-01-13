@@ -2,7 +2,29 @@
 
 import { cookies } from "next/headers"
 
-export async function getTemplates(organizationId: string) {
+interface Template {
+  id: string
+  name: string
+  html: string
+  organization_id: string
+  created_at: string
+}
+
+interface EmailGroup {
+  id: string
+  name: string
+  organization_id: string
+  created_at: string
+}
+
+interface ApiResponse<T> {
+  results: T[]
+  current_page: number
+  total_pages: number
+  total: number
+}
+
+export async function getTemplates(organizationId: string): Promise<ApiResponse<Template>> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get('access-token')?.value
 
@@ -22,11 +44,10 @@ export async function getTemplates(organizationId: string) {
   }
 
   const data = await response.json()
-
-  return data
+  return data as ApiResponse<Template>
 }
 
-export async function getEmailGroups(organizationId: string) {
+export async function getEmailGroups(organizationId: string): Promise<ApiResponse<EmailGroup>> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get('access-token')?.value
 
@@ -46,7 +67,16 @@ export async function getEmailGroups(organizationId: string) {
   }
 
   const data = await response.json()
-  return data
+  return data as ApiResponse<EmailGroup>
+}
+
+interface Campaign {
+  id: string
+  name: string
+  templates: Template[]
+  email_groups: EmailGroup[]
+  scheduled_at: string | null
+  created_at: string
 }
 
 type UpdateCampaignData = {
@@ -60,10 +90,10 @@ export async function updateCampaign(
   organizationId: string, 
   campaignId: string, 
   data: UpdateCampaignData
-) {
+): Promise<Campaign> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get('access-token')?.value
-  console.log(JSON.stringify(data))
+
   const response = await fetch(
     `http://localhost:8080/api/v1/organizations/${organizationId}/campaigns/${campaignId}`, 
     {
@@ -85,10 +115,13 @@ export async function updateCampaign(
   }
 
   const updatedCampaign = await response.json()
-  return updatedCampaign
+  return updatedCampaign as Campaign
 }
 
-export async function getCampaign(organizationId: string, campaignId: string) {
+export async function getCampaign(
+  organizationId: string, 
+  campaignId: string
+): Promise<Campaign> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get('access-token')?.value
 
@@ -115,8 +148,9 @@ export async function getCampaign(organizationId: string, campaignId: string) {
       throw new Error(`Failed to fetch campaign: ${response.status} ${errorText}`)
     }
 
-    return response.json()
-  } catch (error) {
+    const data = await response.json()
+    return data as Campaign
+  } catch (error: unknown) {
     console.error('Campaign fetch error:', {
       url,
       error,

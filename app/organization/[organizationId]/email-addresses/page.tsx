@@ -55,7 +55,6 @@ export default function EmailAddressesPage({
       setError("")
       
       try {
-        console.log('Fetching page:', currentPage)
         const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/email-addresses?page=${currentPage}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,

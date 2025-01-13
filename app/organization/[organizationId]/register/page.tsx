@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation"
 import { RegisterForm } from "./register-form"
 
+type PageProps = {
+  params: Promise<{ organizationId: string }>
+}
 
 async function checkOrganization(organizationId: string) {
   const response = await fetch(
@@ -14,19 +17,17 @@ async function checkOrganization(organizationId: string) {
   return response.ok
 }
 
-
 export default async function RegisterPage({
-  params: { organizationId },
-}: {
-  params: { organizationId: string }
-}) {
-  const orgExists = await checkOrganization(organizationId)
+  params,
+}: PageProps) {
+  const resolvedParams = await params
+  const orgExists = await checkOrganization(resolvedParams.organizationId)
   if (!orgExists) {
     return notFound()
   }
   return (
     <div className="fixed inset-0 grid place-items-center pt-[8vh]">
-      <RegisterForm organizationId={organizationId} />
+      <RegisterForm organizationId={resolvedParams.organizationId} />
     </div>
   )
-} 
+}

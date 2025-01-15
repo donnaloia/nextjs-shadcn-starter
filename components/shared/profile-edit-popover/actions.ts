@@ -1,7 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { EXTERNAL_URLS } from '@/lib/external-urls'
+import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
 
 interface ProfileResponse {
     first_name: string
@@ -30,7 +30,7 @@ export async function updateProfile(formData: FormData): Promise<ProfileResponse
   }
   
   try {
-    const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/profiles/${profileId}`, {
+    const response = await fetch(API_ENDPOINTS.profiles.update(organizationId, profileId), {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

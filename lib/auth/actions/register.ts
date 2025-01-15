@@ -1,5 +1,7 @@
 'use server'
 
+import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
+
 interface RegistrationData {
   username: string
   password: string
@@ -10,17 +12,12 @@ interface UserResponse {
   id: string
 }
 
-const AUTHENTICATION_SERVICE_URL = process.env.AUTHENTICATION_SERVICE_URL || 'http://localhost:8081'
-const PERMISSIONS_SERVICE_URL = process.env.PERMISSIONS_SERVICE_URL || 'http://localhost:8000'
-
 export async function registerUser(organizationId: string, data: RegistrationData) {
   try {
-    // First, register the user
-    const userResponse = await fetch(`${AUTHENTICATION_SERVICE_URL}/users`, {
+    // Register user
+    const userResponse = await fetch(API_ENDPOINTS.auth.register, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
 
@@ -28,23 +25,12 @@ export async function registerUser(organizationId: string, data: RegistrationDat
       throw new Error('User registration failed')
     }
 
-    let user: UserResponse
-    try {
-      user = await userResponse.json()
-    } catch (e) {
-      throw new Error('Invalid response from registration server')
-    }
+    const user: UserResponse = await userResponse.json()
 
-    if (!user.id) {
-      throw new Error('Invalid user data received')
-    }
-
-    // Then, set up initial permissions
-    const permissionsResponse = await fetch(`${PERMISSIONS_SERVICE_URL}/api/permissions`, {
+    // Set up permissions
+    const permissionsResponse = await fetch(API_ENDPOINTS.permissions.create, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user_uuid: user.id,
         organizations: [{

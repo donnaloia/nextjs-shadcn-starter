@@ -4,8 +4,8 @@ import { useEffect, useState, use } from "react"
 import { DataTable } from "@/components/shared/data-table"
 import { columns } from "./columns"
 import { TableSkeleton } from "@/components/shared/table-skeleton"
-import { getAccessToken} from "@/lib/client-auth"
-import { removeAccessToken } from "@/lib/auth/access-token"
+import { getAccessToken} from "@/lib/auth/cookies/client"
+import { removeAccessToken } from "@/lib/auth/cookies/client"
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from "@/components/ui/input"
 import { TypeAnimation } from 'react-type-animation'
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { createCampaign } from "./create/actions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
-import { EXTERNAL_URLS } from '@/lib/external-urls'
+import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
 
 import { Label } from "@/components/ui/label"
 
@@ -56,7 +56,7 @@ export default function CampaignsPage({
       setError("")
       
       try {
-        const response = await fetch(`${EXTERNAL_URLS.EMAIL_CAMPAIGN_SERVICE}/organizations/${organizationId}/campaigns?page=${currentPage}`, {
+        const response = await fetch(API_ENDPOINTS.campaigns.list(organizationId, currentPage), {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
@@ -64,23 +64,32 @@ export default function CampaignsPage({
         })
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          if (response.status === 401) {
+            console.log('Unauthorized, redirecting to login')
+            removeAccessToken()
+            router.push('/login')
+            return
+          }
+          if (response.status === 500) {
+            console.log('Server error, redirecting to login')
+            removeAccessToken()
+            router.push('/login')
+            return
+          }
+          throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`)
         }
 
         const result: ApiResponse = await response.json()
         setData(result.results)
         setPageCount(result.total_pages)
       } catch (err: any) {
-        if (err.response?.status === 401) {
-          removeAccessToken()
-          router.push('/login')
-        }
-        console.error('Fetch error:', err)
+        console.error('Error fetching campaigns:', err)
         setError("Failed to load campaigns. Please try again later.")
         setData([])
       } finally {
         setIsLoading(false)
       }
+
     }
 
     fetchData()

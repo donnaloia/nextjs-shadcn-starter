@@ -1,19 +1,19 @@
-import { cache } from 'react'
+import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
 import { cookies } from 'next/headers'
-
+import { cache } from 'react'
 
 interface Organization {
-  name: string              // Must have a name property
-  [key: string]: unknown    // Can have any other properties
+  name: string
+  [key: string]: unknown
 }
 
 interface PermissionsResponse {
-  user_uuid: string
+  is_authenticated: boolean
   organizations: Organization[]
 }
 
-// Cache the permissions fetch
 export const getPermissions = cache(async () => {
+
   const cookieStore = await cookies()
   const userUuid = cookieStore.get('user-uuid')
   const token = cookieStore.get('access-token')
@@ -24,18 +24,15 @@ export const getPermissions = cache(async () => {
       organizations: []
     }
   }
-
-  const PERMISSIONS_SERVICE_URL = process.env.PERMISSIONS_SERVICE_URL || 'http://localhost:8000'
-
+  
   const response = await fetch(
-    `${PERMISSIONS_SERVICE_URL}/api/permissions/${userUuid.value}`,
+    API_ENDPOINTS.permissions.get(userUuid.value),
     {
       headers: {
         'Authorization': `Bearer ${token.value}`,
       },
-      // Add cache options
       next: {
-        revalidate: 480, // Revalidate every 8 minutes
+        revalidate: 480,
         tags: ['permissions']
       }
     }
@@ -50,8 +47,4 @@ export const getPermissions = cache(async () => {
     isAuthenticated: true,
     organizations: data.organizations || []
   }
-})
-
-export function checkPermission(requiredPermission: string, userPermissions: string[]) {
-  return userPermissions.includes(requiredPermission)
-}
+}) 

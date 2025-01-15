@@ -73,12 +73,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-import { removeAccessToken } from "@/lib/auth/access-token"
+import { removeAccessToken } from "@/lib/auth/cookies/client"
 import { useRouter, useParams } from 'next/navigation'
-import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 import { ProfileEditPopover } from "@/components/shared/profile-edit-popover/index"
-import { useProfile } from "@/lib/profile-context"
+import { useProfile } from "@/lib/auth/utils/profile-context"
+import { logout } from '@/lib/auth/actions/logout'
 
 export default function AppSidebar() {
   const { username, email: userEmail, avatar: userAvatar, organizationName } = useProfile()
@@ -448,8 +448,8 @@ export default function AppSidebar() {
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => {
-                    removeAccessToken()
+                  <DropdownMenuItem onClick={async () => {
+                    await logout()
                     router.refresh()
                   }} className="text-base">
                     <LogOut />

@@ -13,7 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { loginUser } from "@/lib/login-user"
+import { loginUser } from "@/lib/auth/actions/login"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -26,10 +26,8 @@ export default function LoginPage() {
     setError("")
 
     const formData = new FormData(event.currentTarget)
-    const result = await loginUser(
-      formData.get('username') as string,
-      formData.get('password') as string
-    )
+    const organizationId = window.location.pathname.split('/')[2]
+    const result = await loginUser(formData, organizationId)
     
     if (result.success && result.redirectUrl) {
       router.push(result.redirectUrl)

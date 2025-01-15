@@ -4,7 +4,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeProvider } from "../components/theme-provider"
 import { cookies } from 'next/headers'
 import { Toaster } from "@/components/ui/toaster"
-import { ProfileProvider } from '@/lib/profile-context'
+import { ProfileProvider } from '@/lib/auth/utils/profile-context'
 
 
 export default async function RootLayout({

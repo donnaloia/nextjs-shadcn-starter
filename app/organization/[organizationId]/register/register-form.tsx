@@ -13,7 +13,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { registerUser } from "../../../../lib/register-user"
+import { registerUser } from "@/lib/auth/actions/register"
 
 export function RegisterForm({ organizationId }: { organizationId: string }) {
   const router = useRouter()

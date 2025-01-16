@@ -129,6 +129,7 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
                       placeholder="Last Name"
                       style={{ fontSize: '1.25rem' }}
                       className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" 
+
                     />
                   </div>
                 </div>
@@ -159,9 +160,6 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
                   className="min-h-[100px] text-lg placeholder:text-lg placeholder:text-gray-500 text-gray-500 whitespace-pre-wrap"
                   onKeyDown={(e) => {
                     e.stopPropagation()
-                  }}
-                  onChange={(e) => {
-                    console.log('New value:', e.target.value)
                   }}
                 />
               </div>

@@ -165,7 +165,7 @@ export default function CampaignsPage({
               </div>
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-[#ac3f3f] text-[#e9d3ff] hover:bg-[#ac3f3f]/90 text-base px-4 py-6">
+                  <Button className="bg-[#ac4a4a] text-[#e9d3ff] hover:bg-[#ac4a4a]/90 text-base px-4 py-6">
                     Create Campaign <Plus className="ml-1 h-6 w-6 stroke-[4]" />
                   </Button>
                 </DialogTrigger>

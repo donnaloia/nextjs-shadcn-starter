@@ -8,9 +8,9 @@ export async function checkTokens(request: NextRequest) {
 
   if ((!accessToken || !userUuid) && !isLoginPage) {
     console.log('No tokens found, redirecting to login')
-    const response = NextResponse.redirect(new URL('/login', request.url))
     await removeServerCookie('access-token')
     await removeServerCookie('user-uuid')
+    const response = NextResponse.redirect(new URL('/login', request.url))
     return response
   }
 

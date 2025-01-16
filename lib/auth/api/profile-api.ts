@@ -1,12 +1,12 @@
 import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
 
 interface CreateProfileData {
-    user_uuid: string
-    username: string
-    email: string
-    picture_url: string
-    organization_id: string
-  }
+  user_uuid: string
+  username: string
+  email: string
+  picture_url: string
+  organization_id: string
+}
 
 interface ProfileResponse {
   username: string
@@ -47,7 +47,8 @@ export async function createProfile(profileData: CreateProfileData, token: strin
     email: `${profileData.username}@example.com`,
     organization_id: profileData.organization_id,
     picture_url: profileData.picture_url
-  }   
+  }  
+
   const response = await fetch(
     API_ENDPOINTS.profiles.list(profileData.organization_id),
     {

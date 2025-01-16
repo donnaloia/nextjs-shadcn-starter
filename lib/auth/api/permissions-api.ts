@@ -12,13 +12,8 @@ interface PermissionsResponse {
   organizations: Organization[]
 }
 
-export const getPermissions = cache(async () => {
-
-  const cookieStore = await cookies()
-  const userUuid = cookieStore.get('user-uuid')
-  const token = cookieStore.get('access-token')
-
-  if (!userUuid || !token) {
+export const getPermissions = cache(async (userUuid: string, accessToken: string) => {
+  if (!userUuid || !accessToken) {
     return {
       isAuthenticated: false,
       organizations: []
@@ -26,10 +21,10 @@ export const getPermissions = cache(async () => {
   }
   
   const response = await fetch(
-    API_ENDPOINTS.permissions.get(userUuid.value),
+    API_ENDPOINTS.permissions.get(userUuid),
     {
       headers: {
-        'Authorization': `Bearer ${token.value}`,
+        'Authorization': `Bearer ${accessToken}`,
       },
       next: {
         revalidate: 480,

@@ -225,7 +225,7 @@ export function CampaignForm({
 
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" className="w-full text-base font-semibold py-6 bg-[#ac3f3f]">
+                      <Button variant="destructive" className="w-full text-base font-semibold py-6 bg-[#ac4a4a]">
                         Blast Off <span className="ml-2">🚀</span>
                       </Button>
                     </AlertDialogTrigger>

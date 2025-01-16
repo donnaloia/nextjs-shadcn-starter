@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
+import { setProfileCookies } from '@/lib/auth/cookies/server'
 
 interface ProfileResponse {
     first_name: string
@@ -19,18 +20,20 @@ export async function updateProfile(formData: FormData): Promise<ProfileResponse
   const organizationId = cookieStore.get('organization-id')?.value
   const profileId = cookieStore.get('user-uuid')?.value
   const accessToken = cookieStore.get('access-token')?.value
+  const username = cookieStore.get('profile-username')?.value
   
   const requestBody = {
-    first_name: formData.get('firstName'),
-    last_name: formData.get('lastName'),
-    email: formData.get('email'),
-    bio: formData.get('bio'),
-    timezone: formData.get('timezone'),
+    username: formData.get('username') || username,
+    first_name: formData.get('firstName') || null,
+    last_name: formData.get('lastName') || null,
+    email: formData.get('email') || null,
+    bio: formData.get('bio') || null,
+    timezone: formData.get('timezone') || null,
     notifications_enabled: formData.get('notifications') === 'true'
   }
   
   try {
-    const response = await fetch(API_ENDPOINTS.profiles.update(organizationId, profileId), {
+    const response = await fetch(API_ENDPOINTS.profiles.update(organizationId as string, profileId as string), {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -47,40 +50,16 @@ export async function updateProfile(formData: FormData): Promise<ProfileResponse
 
     const data: ProfileResponse = await response.json()
     
-    cookieStore.set('profile-first-name', data.first_name, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
-
-    cookieStore.set('profile-last-name', data.last_name, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
-
-    cookieStore.set('profile-email', data.email, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
-
-    cookieStore.set('profile-bio', data.bio, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
-
-    cookieStore.set('profile-timezone', data.timezone, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-      })
+    // Set profile cookies
+    await setProfileCookies({
+      username: data.username,
+      email: data.email,
+      picture_url: '',
+      first_name: data.first_name,
+      last_name: data.last_name,
+      bio: data.bio,
+      timezone: data.timezone
+    })
 
     return data
 

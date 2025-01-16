@@ -24,23 +24,8 @@ export async function loginUser(formData: FormData, organizationId: string) {
     // Clear profile cookies
     await clearProfileCookies()
 
-    // Set cookies
-    const cookieStore = await cookies()
-      cookieStore.set('access-token', loginResponse.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    })
-    cookieStore.set('user-uuid', userUuid, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-    })
-
     // Get user's permission and redirect to their first organization
-    const permissions = await getPermissions()
+    const permissions = await getPermissions(userUuid, loginResponse.access_token)
 
     if (!permissions.organizations || permissions.organizations.length === 0) {
         throw new Error('No organizations found for user')
@@ -70,10 +55,6 @@ export async function loginUser(formData: FormData, organizationId: string) {
       bio: profile.bio,
       timezone: profile.timezone
     })
-
-    // Clear all profile cookies (because )
-    //cookieStore.set('profile-notifications-enabled', profile.notifications_enabled.toString())
-
 
     const redirectUrl = `/organization/${firstOrg}/campaigns`
     return { success: true, redirectUrl }

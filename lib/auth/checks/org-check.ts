@@ -17,7 +17,7 @@ export async function checkOrganizationAccess(organizationId: string | Promise<b
   }
 
   try {
-    const permissions = await getPermissions()
+    const permissions = await getPermissions(userUuid, accessToken)
     return permissions.organizations.some(org => org.name === organizationId)
   } catch (error) {
     console.error('Error checking organization access:', error)

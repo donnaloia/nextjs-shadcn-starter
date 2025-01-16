@@ -1,10 +1,14 @@
+import { cache } from 'react'
 import { API_ENDPOINTS } from '@/lib/config/api/endpoints'
 
-export async function getOrganizationName(organizationId: string, token: string): Promise<string> {
+export const getOrganizationName = cache(async (organizationId: string, token: string): Promise<string> => {
   const response = await fetch(API_ENDPOINTS.organizations.get(organizationId), {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
+    next: {
+      revalidate: 3600 // Cache for 1 hour (in seconds)
+    }
   })
   
   if (!response.ok) {
@@ -12,5 +16,5 @@ export async function getOrganizationName(organizationId: string, token: string)
   }
 
   const data = await response.json()
-  return data.name || organizationId
-} 
+  return data.name
+}) 

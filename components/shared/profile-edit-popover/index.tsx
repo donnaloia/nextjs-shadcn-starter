@@ -47,7 +47,15 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
     
     const formData = new FormData(form as HTMLFormElement)
     
-    updateProfile(formData)
+    // Remove empty fields from FormData
+    const cleanFormData = new FormData()
+    for (const [key, value] of formData.entries()) {
+      if (value !== '') {
+        cleanFormData.append(key, value)
+      }
+    }
+    
+    updateProfile(cleanFormData)
       .then(() => {
         toast({
           title: "Profile Updated",
@@ -115,6 +123,11 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
                       style={{ fontSize: '1.25rem' }}
                       autoFocus={false}
                       className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" 
+                      onChange={(e) => {
+                        if (e.target.value.trim() === '') {
+                          e.target.value = ''  // Clear the input if it's just whitespace
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -129,6 +142,11 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
                       placeholder="Last Name"
                       style={{ fontSize: '1.25rem' }}
                       className="pl-9 text-lg h-12 placeholder:text-lg placeholder:text-gray-500 text-gray-500" 
+                      onChange={(e) => {
+                        if (e.target.value.trim() === '') {
+                          e.target.value = ''  // Clear the input if it's just whitespace
+                        }
+                      }}
                     />
                   </div>
                 </div>
@@ -145,6 +163,11 @@ export function ProfileEditPopover({ trigger, username, userEmail, userAvatar, o
                     placeholder="Enter your email address" 
                     style={{ fontSize: '1.25rem' }}
                     className="pl-12 text-2xl h-12 placeholder:text-2xl text-2xl placeholder:text-gray-500 text-gray-500" 
+                    onChange={(e) => {
+                      if (e.target.value.trim() === '') {
+                        e.target.value = ''  // Clear the input if it's just whitespace
+                      }
+                    }}
                   />
                 </div>
               </div>
